@@ -50,6 +50,21 @@ GLYPHS = {
     "credentials": '<path d="M41.5 26.5v-2.5a4.5 4.5 0 0 1 9 0v2.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>'
     '<rect x="38.5" y="26" width="15" height="11.5" rx="2.4" fill="#fff"/>'
     '<circle cx="46" cy="30.8" r="1.6" fill="#64748b"/><rect x="45.2" y="31" width="1.6" height="3.6" rx=".8" fill="#64748b"/>',
+    "coverage": '<circle cx="46" cy="28" r="7.5" stroke="#fff" stroke-opacity=".4" stroke-width="3.2"/>'
+    '<path d="M46 20.5a7.5 7.5 0 1 1-7.5 7.5" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>',
+    "testids": '<path d="M40.5 19.5 52.5 28l-5.4 1.1 3.2 5.9-2.6 1.4-3.2-5.9-4 3.7z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>',
+    "branches": '<path d="M41 22.5v11M41 24.5c0 3.6 2.6 5.5 7 5.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>'
+    '<circle cx="41" cy="21.5" r="2.6" fill="#fff"/><circle cx="41" cy="34.5" r="2.6" fill="#fff"/><circle cx="51" cy="30" r="2.6" fill="#fff"/>',
+    "ci": '<circle cx="46" cy="29.5" r="7" stroke="#fff" stroke-width="2.4"/><rect x="44.2" y="18.5" width="3.6" height="2.6" rx="1" fill="#fff"/>'
+    '<path d="M46 29.5v-4M46 29.5l2.6 1.8" stroke="#fff" stroke-width="2" stroke-linecap="round"/>',
+    "licenses": '<path d="M46 20v15.5M39 23.5h14M42 36h8M39 23.5l-2.8 6.5M39 23.5l2.8 6.5M53 23.5l-2.8 6.5M53 23.5l2.8 6.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>'
+    '<path d="M36.2 30h5.6a2.8 2.8 0 0 1-5.6 0zM50.2 30h5.6a2.8 2.8 0 0 1-5.6 0z" fill="#fff"/><circle cx="46" cy="20" r="1.6" fill="#fff"/>',
+    "api": '<path d="M42 20.5c-2 0-3 .8-3 2.6v2.6c0 1.4-.8 2.3-2.3 2.3 1.5 0 2.3.9 2.3 2.3v2.6c0 1.8 1 2.6 3 2.6M50 20.5c2 0 3 .8 3 2.6v2.6c0 1.4.8 2.3 2.3 2.3-1.5 0-2.3.9-2.3 2.3v2.6c0 1.8-1 2.6-3 2.6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'
+    '<circle cx="46" cy="28" r="1.8" fill="#fff"/>',
+    "fleet": '<path d="M37.5 30.5h17l-3.2 5.5H40.7z" fill="#fff"/><path d="M46 19v11.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>'
+    '<path d="M47.4 20.5l6.4 8.5h-6.4zM44.6 22.5l-4.6 6.5h4.6z" fill="#fff"/>',
+    "stack": '<path d="M46 19.5l8.5 4.5-8.5 4.5-8.5-4.5z" fill="#fff"/>'
+    '<path d="M37.5 28.5l8.5 4.5 8.5-4.5M37.5 33l8.5 4.5 8.5-4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
 }
 
 VARIANTS = {
@@ -63,6 +78,14 @@ VARIANTS = {
     "bundles": "#0ea5e9",
     "repos": "#4f46e5",
     "credentials": "#64748b",
+    "coverage": "#65a30d",
+    "testids": "#c026d3",
+    "branches": "#7c3aed",
+    "ci": "#0891b2",
+    "licenses": "#b45309",
+    "api": "#0f766e",
+    "fleet": "#1d4ed8",
+    "stack": "#be123c",
 }
 
 
