@@ -41,6 +41,13 @@ GLYPHS = {
     '<path d="M46 20c-2.8 2.4-4 5-4 8s1.2 5.6 4 8c2.8-2.4 4-5 4-8s-1.2-5.6-4-8zM38 28h16" stroke="#fff" stroke-opacity=".75" stroke-width="1.6"/>',
     "release": '<path d="M38.5 21.5h8.5l7 7-8.5 8.5-7-7z" fill="#fff"/><circle cx="42.5" cy="25.5" r="1.8" fill="#e0a800"/>',
     "quality": '<path d="M46 19l2.2 6.8L55 28l-6.8 2.2L46 37l-2.2-6.8L37 28l6.8-2.2z" fill="#fff"/>',
+    "knowledge": '<path d="M46 22.6c-2.4-1.7-5.2-2.4-8.5-2.4v14.6c3.3 0 6.1.7 8.5 2.4 2.4-1.7 5.2-2.4 8.5-2.4V20.2c-3.3 0-6.1.7-8.5 2.4z" fill="#fff"/>'
+    '<path d="M46 22.6v14.6M40.2 25.2c1.4 0 2.6.3 3.6.8M40.2 28.7c1.4 0 2.6.3 3.6.8M51.8 25.2c-1.4 0-2.6.3-3.6.8M51.8 28.7c-1.4 0-2.6.3-3.6.8" stroke="#1f9d55" stroke-width="1.3" stroke-linecap="round"/>',
+    "bundles": '<path d="M46 19l8.5 4.6v9.6L46 37.8l-8.5-4.6v-9.6z" fill="#fff"/>'
+    '<path d="M37.9 23.8 46 28.2l8.1-4.4M46 28.2v9.2" stroke="#0ea5e9" stroke-width="1.7" stroke-linejoin="round"/>',
+    "credentials": '<path d="M41.5 26.5v-2.5a4.5 4.5 0 0 1 9 0v2.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>'
+    '<rect x="38.5" y="26" width="15" height="11.5" rx="2.4" fill="#fff"/>'
+    '<circle cx="46" cy="30.8" r="1.6" fill="#64748b"/><rect x="45.2" y="31" width="1.6" height="3.6" rx=".8" fill="#64748b"/>',
 }
 
 VARIANTS = {
@@ -50,6 +57,9 @@ VARIANTS = {
     "browserslist": "#14b8a6",
     "release": "#e0a800",
     "quality": "#ec4899",
+    "knowledge": "#1f9d55",
+    "bundles": "#0ea5e9",
+    "credentials": "#64748b",
 }
 
 
@@ -137,7 +147,7 @@ def profile_banner():
     w, h = 1280, 420
     row = "".join(
         f'<g transform="translate({540 + i * 102} 282) scale(1.35)">{icon(name)}</g>'
-        for i, name in enumerate(["holtkeeper", *VARIANTS])
+        for i, name in enumerate(["holtkeeper", *(c[0] for c in CAPABILITIES)])
     )
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">
 {background(w, h, ORANGE)}
