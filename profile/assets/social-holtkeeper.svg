@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#120c08"/><stop offset="1" stop-color="#1e140d"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="256.0" cy="352.0" r="480.0" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#ff7a1a" stop-opacity=".24"/><stop offset="1" stop-color="#ff7a1a" stop-opacity="0"/>
+  </radialGradient>
+  <pattern id="dots" width="32" height="32" patternUnits="userSpaceOnUse">
+    <circle cx="2" cy="2" r="1.4" fill="#fff" fill-opacity=".05"/>
+  </pattern>
+  <linearGradient id="bar" x1="0" x2="1"><stop offset="0" stop-color="#ff7a1a"/><stop offset="1" stop-color="#ffb547"/></linearGradient>
+</defs>
+<rect width="1280" height="640" fill="url(#bg)"/>
+<rect width="1280" height="640" fill="url(#dots)"/>
+<rect width="1280" height="640" fill="url(#glow)"/>
+<rect y="630" width="1280" height="10" fill="url(#bar)"/>
+<g transform="translate(96 150) scale(5.4)"><g fill="none"><circle cx="13.5" cy="25.5" r="4.6" fill="#d95a0b"/><circle cx="50.5" cy="25.5" r="4.6" fill="#d95a0b"/><circle cx="13.5" cy="25.5" r="2" fill="#ffb547"/><circle cx="50.5" cy="25.5" r="2" fill="#ffb547"/><path d="M8 42c0-14 10.7-25 24-25s24 11 24 25v6H8z" fill="#ff7a1a"/><circle cx="23" cy="32" r="3.4" fill="#1a120c"/><circle cx="24.2" cy="30.8" r="1.1" fill="#fff"/><circle cx="41" cy="32" r="3.4" fill="#1a120c"/><circle cx="42.2" cy="30.8" r="1.1" fill="#fff"/><ellipse cx="32" cy="41.5" rx="12" ry="6.5" fill="#ffe6cc"/><path d="M21 39.5l-8.5-1.8M21 42.5l-8.5 1M43 39.5l8.5-1.8M43 42.5l8.5 1" stroke="#ffe6cc" stroke-opacity=".85" stroke-width="1.2" stroke-linecap="round"/><ellipse cx="32" cy="38.2" rx="3.3" ry="2.3" fill="#1a120c"/><path d="M28.6 41.6q1.7 2 3.4 0q1.7 2 3.4 0" stroke="#1a120c" stroke-width="1.4" stroke-linecap="round"/><circle cx="11" cy="52.5" r="5" stroke="#ffb547" stroke-width="3.4"/><rect x="15.5" y="50.8" width="42.5" height="3.4" rx="1.7" fill="#ffb547"/><rect x="45" y="52" width="3.4" height="6.5" rx="1.2" fill="#ffb547"/><rect x="51" y="52" width="3.4" height="4.8" rx="1.2" fill="#ffb547"/></g></g>
+<text x="520" y="188" font-family="Menlo, SF Mono, monospace" font-size="30" fill="#ff7a1a">holtkeeper/<tspan fill="#a8907d">holtkeeper</tspan></text>
+<text x="520" y="268" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="80" font-weight="700" fill="#fbf5ef">Holtkeeper</text>
+<text x="520" y="318" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34" fill="#cdbcad">Keeps a fleet of Git repositories in order:</text><text x="520" y="364" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34" fill="#cdbcad">AI review, dependency updates, audits</text><text x="520" y="410" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34" fill="#cdbcad">and releases on GitLab and GitHub.</text>
+<rect x="520" y="488" width="171.0" height="44" rx="22" fill="#ff7a1a" fill-opacity=".14" stroke="#ff7a1a" stroke-opacity=".5"/><text x="605.5" y="517" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="500" fill="#f1e6dc">TypeScript</text><rect x="703.0" y="488" width="69.5" height="44" rx="22" fill="#ff7a1a" fill-opacity=".14" stroke="#ff7a1a" stroke-opacity=".5"/><text x="737.75" y="517" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="500" fill="#f1e6dc">Bun</text><rect x="784.5" y="488" width="113.0" height="44" rx="22" fill="#ff7a1a" fill-opacity=".14" stroke="#ff7a1a" stroke-opacity=".5"/><text x="841.0" y="517" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="500" fill="#f1e6dc">GitLab</text><rect x="909.5" y="488" width="113.0" height="44" rx="22" fill="#ff7a1a" fill-opacity=".14" stroke="#ff7a1a" stroke-opacity=".5"/><text x="966.0" y="517" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="500" fill="#f1e6dc">GitHub</text><rect x="1034.5" y="488" width="69.5" height="44" rx="22" fill="#ff7a1a" fill-opacity=".14" stroke="#ff7a1a" stroke-opacity=".5"/><text x="1069.25" y="517" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="500" fill="#f1e6dc">MIT</text>
+<text x="1220" y="590" text-anchor="end" font-family="Menlo, SF Mono, monospace" font-size="22" fill="#8a7464">github.com/holtkeeper</text>
+</svg>
