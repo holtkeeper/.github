@@ -45,6 +45,8 @@ GLYPHS = {
     '<path d="M46 22.6v14.6M40.2 25.2c1.4 0 2.6.3 3.6.8M40.2 28.7c1.4 0 2.6.3 3.6.8M51.8 25.2c-1.4 0-2.6.3-3.6.8M51.8 28.7c-1.4 0-2.6.3-3.6.8" stroke="#1f9d55" stroke-width="1.3" stroke-linecap="round"/>',
     "bundles": '<path d="M46 19l8.5 4.6v9.6L46 37.8l-8.5-4.6v-9.6z" fill="#fff"/>'
     '<path d="M37.9 23.8 46 28.2l8.1-4.4M46 28.2v9.2" stroke="#0ea5e9" stroke-width="1.7" stroke-linejoin="round"/>',
+    "repos": '<path d="M41 22.5v11M41 30c0-3 1.6-4.4 4.6-4.6l1.4-.1c2.6-.2 4-1.5 4-4" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>'
+    '<circle cx="41" cy="21.5" r="2.6" fill="#fff"/><circle cx="41" cy="34.5" r="2.6" fill="#fff"/><circle cx="51" cy="21.5" r="2.6" fill="#fff"/>',
     "credentials": '<path d="M41.5 26.5v-2.5a4.5 4.5 0 0 1 9 0v2.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>'
     '<rect x="38.5" y="26" width="15" height="11.5" rx="2.4" fill="#fff"/>'
     '<circle cx="46" cy="30.8" r="1.6" fill="#64748b"/><rect x="45.2" y="31" width="1.6" height="3.6" rx=".8" fill="#64748b"/>',
@@ -59,6 +61,7 @@ VARIANTS = {
     "quality": "#ec4899",
     "knowledge": "#1f9d55",
     "bundles": "#0ea5e9",
+    "repos": "#4f46e5",
     "credentials": "#64748b",
 }
 
