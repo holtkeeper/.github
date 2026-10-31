@@ -65,6 +65,22 @@ GLYPHS = {
     '<path d="M47.4 20.5l6.4 8.5h-6.4zM44.6 22.5l-4.6 6.5h4.6z" fill="#fff"/>',
     "stack": '<path d="M46 19.5l8.5 4.5-8.5 4.5-8.5-4.5z" fill="#fff"/>'
     '<path d="M37.5 28.5l8.5 4.5 8.5-4.5M37.5 33l8.5 4.5 8.5-4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    "activity": '<path d="M37 28.5h4l2.6-6.5 4.8 13 2.6-6.5h4" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>',
+    "ai": '<path d="M44 22l1.9 6.1L52 30l-6.1 1.9L44 38l-1.9-6.1L36 30l6.1-1.9z" fill="#fff"/>'
+    '<path d="M51.5 17.5l1 2.8 2.8 1-2.8 1-1 2.8-1-2.8-2.8-1 2.8-1z" fill="#fff"/>',
+    "storage": '<path d="M39 22.5c0-1.7 3.1-3 7-3s7 1.3 7 3v11c0 1.7-3.1 3-7 3s-7-1.3-7-3z" fill="#fff"/>'
+    '<path d="M39 22.5c0 1.7 3.1 3 7 3s7-1.3 7-3M39 28c0 1.7 3.1 3 7 3s7-1.3 7-3" stroke="#a16207" stroke-width="1.4"/>',
+    "auditlog": '<rect x="39.5" y="19.5" width="13" height="17" rx="2.2" fill="#fff"/>'
+    '<path d="M42.5 24h7M42.5 28h7M42.5 32h4.5" stroke="#9f1239" stroke-width="1.6" stroke-linecap="round"/>',
+    "users": '<circle cx="50.8" cy="23.2" r="2.7" fill="#fff" fill-opacity=".6"/><path d="M47 34c.3-3.4 1.8-5.6 4-5.6 2.8 0 4.8 2.4 4.8 5.6z" fill="#fff" fill-opacity=".6"/>'
+    '<circle cx="44" cy="24.2" r="3.3" fill="#fff"/><path d="M37.2 36c0-4 2.9-6.8 6.8-6.8s6.8 2.8 6.8 6.8z" fill="#fff"/>',
+    "automation": '<path d="M48 19l-8.5 10.8h5.6L43.6 37l8.6-11.2h-5.6z" fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round"/>',
+    "jobs": '<path d="M37.5 22.2l1.7 1.7 3.1-3.3M37.5 28.2l1.7 1.7 3.1-3.3M37.5 34.2l1.7 1.7 3.1-3.3" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+    '<path d="M45.5 22.5h9M45.5 28.5h9M45.5 34.5h6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>',
+    "settings": '<circle cx="46" cy="28" r="7.2" stroke="#fff" stroke-width="3" stroke-dasharray="2.9 2.755"/>'
+    '<circle cx="46" cy="28" r="4.6" stroke="#fff" stroke-width="2.6"/>',
+    "warmup": '<path d="M46 19c.5 3.5 3 5 4.6 7.6 1.4 2.2 1.9 4 1.9 5.4 0 3.6-2.9 6-6.5 6s-6.5-2.4-6.5-6c0-2.6 1.4-4.6 3-5.8.1 1.6.8 2.8 2 3.4-.6-3.7.3-7.5 1.5-10.6z" fill="#fff"/>'
+    '<path d="M46 30.5c1.6 1.4 2.6 2.7 2.6 4 0 1.6-1.2 2.5-2.6 2.5s-2.6-.9-2.6-2.5c0-1.3 1-2.6 2.6-4z" fill="#dc2626"/>',
 }
 
 VARIANTS = {
@@ -86,6 +102,15 @@ VARIANTS = {
     "api": "#0f766e",
     "fleet": "#1d4ed8",
     "stack": "#be123c",
+    "activity": "#059669",
+    "ai": "#9333ea",
+    "storage": "#a16207",
+    "auditlog": "#9f1239",
+    "users": "#db2777",
+    "automation": "#0369a1",
+    "jobs": "#1e293b",
+    "settings": "#52525b",
+    "warmup": "#dc2626",
 }
 
 
