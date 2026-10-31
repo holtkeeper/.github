@@ -81,6 +81,9 @@ GLYPHS = {
     '<circle cx="46" cy="28" r="4.6" stroke="#fff" stroke-width="2.6"/>',
     "warmup": '<path d="M46 19c.5 3.5 3 5 4.6 7.6 1.4 2.2 1.9 4 1.9 5.4 0 3.6-2.9 6-6.5 6s-6.5-2.4-6.5-6c0-2.6 1.4-4.6 3-5.8.1 1.6.8 2.8 2 3.4-.6-3.7.3-7.5 1.5-10.6z" fill="#fff"/>'
     '<path d="M46 30.5c1.6 1.4 2.6 2.7 2.6 4 0 1.6-1.2 2.5-2.6 2.5s-2.6-.9-2.6-2.5c0-1.3 1-2.6 2.6-4z" fill="#dc2626"/>',
+    "assets": '<rect x="40.5" y="19.5" width="14" height="11.5" rx="2" fill="#fff" fill-opacity=".55"/>'
+    '<rect x="37" y="23.5" width="14.5" height="12.5" rx="2.2" fill="#fff"/>'
+    '<circle cx="47.6" cy="27.4" r="1.5" fill="#2563eb"/><path d="M39.3 33.8l3.6-4.4 2.6 3 1.7-1.8 2.3 3.2z" fill="#2563eb"/>',
 }
 
 VARIANTS = {
@@ -111,6 +114,7 @@ VARIANTS = {
     "jobs": "#1e293b",
     "settings": "#52525b",
     "warmup": "#dc2626",
+    "assets": "#2563eb",
 }
 
 
