@@ -68,8 +68,9 @@ GLYPHS = {
     "activity": '<path d="M37 28.5h4l2.6-6.5 4.8 13 2.6-6.5h4" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>',
     "ai": '<path d="M44 22l1.9 6.1L52 30l-6.1 1.9L44 38l-1.9-6.1L36 30l6.1-1.9z" fill="#fff"/>'
     '<path d="M51.5 17.5l1 2.8 2.8 1-2.8 1-1 2.8-1-2.8-2.8-1 2.8-1z" fill="#fff"/>',
-    "storage": '<path d="M39 22.5c0-1.7 3.1-3 7-3s7 1.3 7 3v11c0 1.7-3.1 3-7 3s-7-1.3-7-3z" fill="#fff"/>'
-    '<path d="M39 22.5c0 1.7 3.1 3 7 3s7-1.3 7-3M39 28c0 1.7 3.1 3 7 3s7-1.3 7-3" stroke="#a16207" stroke-width="1.4"/>',
+    "storage": '<rect x="37.5" y="21" width="17" height="14" rx="2.4" fill="#fff"/>'
+    '<path d="M37.5 28h17M40.5 24.5h6M40.5 31.5h6" stroke="#a16207" stroke-width="1.4" stroke-linecap="round"/>'
+    '<circle cx="51.2" cy="24.5" r="1.2" fill="#a16207"/><circle cx="51.2" cy="31.5" r="1.2" fill="#a16207"/>',
     "auditlog": '<rect x="39.5" y="19.5" width="13" height="17" rx="2.2" fill="#fff"/>'
     '<path d="M42.5 24h7M42.5 28h7M42.5 32h4.5" stroke="#9f1239" stroke-width="1.6" stroke-linecap="round"/>',
     "users": '<circle cx="50.8" cy="23.2" r="2.7" fill="#fff" fill-opacity=".6"/><path d="M47 34c.3-3.4 1.8-5.6 4-5.6 2.8 0 4.8 2.4 4.8 5.6z" fill="#fff" fill-opacity=".6"/>'
@@ -84,6 +85,16 @@ GLYPHS = {
     "assets": '<rect x="40.5" y="19.5" width="14" height="11.5" rx="2" fill="#fff" fill-opacity=".55"/>'
     '<rect x="37" y="23.5" width="14.5" height="12.5" rx="2.2" fill="#fff"/>'
     '<circle cx="47.6" cy="27.4" r="1.5" fill="#2563eb"/><path d="M39.3 33.8l3.6-4.4 2.6 3 1.7-1.8 2.3 3.2z" fill="#2563eb"/>',
+    "database": '<path d="M39 22.5c0-1.7 3.1-3 7-3s7 1.3 7 3v11c0 1.7-3.1 3-7 3s-7-1.3-7-3z" fill="#fff"/>'
+    '<path d="M39 22.5c0 1.7 3.1 3 7 3s7-1.3 7-3M39 28c0 1.7 3.1 3 7 3s7-1.3 7-3" stroke="#0d9488" stroke-width="1.4"/>',
+    "caches": '<rect x="37" y="20.5" width="18" height="4.6" rx="1.4" fill="#fff"/>'
+    '<path d="M38.5 26.3h15v8.2a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2z" fill="#fff"/>'
+    '<path d="M43.5 29.6h5" stroke="#78350f" stroke-width="1.8" stroke-linecap="round"/>',
+    "libraries": '<rect x="37.5" y="21" width="4" height="15" rx="1" fill="#fff"/><rect x="42.8" y="19" width="4" height="17" rx="1" fill="#fff"/>'
+    '<path d="M48.6 21.6l3.8-1.2 4.4 14.2-3.8 1.2z" fill="#fff"/>'
+    '<path d="M37.5 24h4M42.8 22.5h4M37.5 32.5h4M42.8 32.5h4" stroke="#4d7c0f" stroke-width="1.2"/>',
+    "dependencies": '<path d="M46 21.5 39.5 33.5M46 21.5l6.5 12M39.5 33.5h13" stroke="#fff" stroke-width="1.8"/>'
+    '<circle cx="46" cy="21.5" r="2.8" fill="#fff"/><circle cx="39.5" cy="33.5" r="2.8" fill="#fff"/><circle cx="52.5" cy="33.5" r="2.8" fill="#fff"/>',
 }
 
 VARIANTS = {
@@ -115,6 +126,10 @@ VARIANTS = {
     "settings": "#52525b",
     "warmup": "#dc2626",
     "assets": "#2563eb",
+    "database": "#0d9488",
+    "caches": "#78350f",
+    "libraries": "#4d7c0f",
+    "dependencies": "#155e75",
 }
 
 
