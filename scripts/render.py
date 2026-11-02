@@ -95,6 +95,18 @@ GLYPHS = {
     '<path d="M37.5 24h4M42.8 22.5h4M37.5 32.5h4M42.8 32.5h4" stroke="#4d7c0f" stroke-width="1.2"/>',
     "dependencies": '<path d="M46 21.5 39.5 33.5M46 21.5l6.5 12M39.5 33.5h13" stroke="#fff" stroke-width="1.8"/>'
     '<circle cx="46" cy="21.5" r="2.8" fill="#fff"/><circle cx="39.5" cy="33.5" r="2.8" fill="#fff"/><circle cx="52.5" cy="33.5" r="2.8" fill="#fff"/>',
+    "chat": '<rect x="44" y="19.5" width="11.5" height="9" rx="2.5" fill="#fff" fill-opacity=".55"/><path d="M52 28.3v3l-3-3z" fill="#fff" fill-opacity=".55"/>'
+    '<path d="M39.5 24.5h8.5a2.5 2.5 0 0 1 2.5 2.5v5a2.5 2.5 0 0 1-2.5 2.5h-4.5l-4 3v-3a2.5 2.5 0 0 1-2.5-2.5v-5a2.5 2.5 0 0 1 2.5-2.5z" fill="#fff"/>'
+    '<path d="M40 28h7M40 31h4.5" stroke="#5b21b6" stroke-width="1.4" stroke-linecap="round"/>',
+    "digests": '<rect x="37.5" y="20.5" width="17" height="15.5" rx="2" fill="#fff"/>'
+    '<rect x="40" y="23" width="12" height="2.2" rx=".6" fill="#065f46"/><rect x="40" y="27.2" width="5" height="5.8" rx=".6" fill="#065f46"/>'
+    '<path d="M47.3 28h4.7M47.3 30.4h4.7M47.3 32.8h4.7" stroke="#065f46" stroke-width="1.2" stroke-linecap="round"/>',
+    "releaseboard": '<rect x="37.5" y="20" width="4.6" height="7" rx="1.2" fill="#fff"/><rect x="37.5" y="28.5" width="4.6" height="5" rx="1.2" fill="#fff"/>'
+    '<rect x="43.7" y="20" width="4.6" height="10.5" rx="1.2" fill="#fff"/>'
+    '<rect x="49.9" y="20" width="4.6" height="4.5" rx="1.2" fill="#fff"/><rect x="49.9" y="26" width="4.6" height="4.5" rx="1.2" fill="#fff"/><rect x="49.9" y="32" width="4.6" height="4.5" rx="1.2" fill="#fff"/>',
+    "mcp": '<path d="M43 25v-5M49 25v-5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>'
+    '<rect x="40" y="24.5" width="12" height="8" rx="2.2" fill="#fff"/><path d="M46 32.5v4.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
+    "slack": '<path d="M43.5 20l-2 16M50.5 20l-2 16M38.5 25.5h15M37.5 31h15" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
 }
 
 VARIANTS = {
@@ -130,6 +142,11 @@ VARIANTS = {
     "caches": "#78350f",
     "libraries": "#4d7c0f",
     "dependencies": "#155e75",
+    "chat": "#5b21b6",
+    "digests": "#065f46",
+    "releaseboard": "#3730a3",
+    "mcp": "#475569",
+    "slack": "#86198f",
 }
 
 
