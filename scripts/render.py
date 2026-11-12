@@ -1,300 +1,244 @@
 #!/usr/bin/env python3
+import functools
 import math
 import pathlib
 import subprocess
 import tempfile
 
+import uharfbuzz as hb
+from fontTools.pens.svgPathPen import SVGPathPen
+from fontTools.ttLib import TTFont
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "profile" / "assets"
+FONTS = ROOT / "scripts" / "fonts"
 
-ORANGE = "#ff7a1a"
-EMBER = "#d95a0b"
-AMBER = "#ffb547"
-CREAM = "#ffe6cc"
-INK = "#1a120c"
+BG = "#0b0b0c"
+PANEL = "#111113"
+RAISE = "#18181b"
+FG = "#ededef"
+SOFT = "#c9c9cf"
+MUTED = "#93939b"
+ACCENT = "#f0a63a"
+INK = "#0b0b0c"
 
-HEAD = "M8 42c0-14 10.7-25 24-25s24 11 24 25v6H8z"
-EARS = (
-    f'<circle cx="13.5" cy="25.5" r="4.6" fill="{EMBER}"/><circle cx="50.5" cy="25.5" r="4.6" fill="{EMBER}"/>'
-    f'<circle cx="13.5" cy="25.5" r="2" fill="{AMBER}"/><circle cx="50.5" cy="25.5" r="2" fill="{AMBER}"/>'
-)
-LEFT_EYE = f'<circle cx="23" cy="32" r="3.4" fill="{INK}"/><circle cx="24.2" cy="30.8" r="1.1" fill="#fff"/>'
-RIGHT_EYE = f'<circle cx="41" cy="32" r="3.4" fill="{INK}"/><circle cx="42.2" cy="30.8" r="1.1" fill="#fff"/>'
-MUZZLE = (
-    f'<ellipse cx="32" cy="41.5" rx="12" ry="6.5" fill="{CREAM}"/>'
-    f'<path d="M21 39.5l-8.5-1.8M21 42.5l-8.5 1M43 39.5l8.5-1.8M43 42.5l8.5 1" stroke="{CREAM}" stroke-opacity=".85" stroke-width="1.2" stroke-linecap="round"/>'
-    f'<ellipse cx="32" cy="38.2" rx="3.3" ry="2.3" fill="{INK}"/>'
-    f'<path d="M28.6 41.6q1.7 2 3.4 0q1.7 2 3.4 0" stroke="{INK}" stroke-width="1.4" stroke-linecap="round"/>'
-)
-KEY = (
-    f'<circle cx="11" cy="52.5" r="5" stroke="{AMBER}" stroke-width="3.4"/>'
-    f'<rect x="15.5" y="50.8" width="42.5" height="3.4" rx="1.7" fill="{AMBER}"/>'
-    f'<rect x="45" y="52" width="3.4" height="6.5" rx="1.2" fill="{AMBER}"/>'
-    f'<rect x="51" y="52" width="3.4" height="4.8" rx="1.2" fill="{AMBER}"/>'
+HEAD = (
+    "M32 9C47 9 57 19 58 32C58.5 37 60 41 62.5 44C59.5 44.5 58 45.5 57.5 47C60 48.5 61 50 61 51.5"
+    "C57 51 55 52 52.5 54C47 58.5 40 60 32 60C24 60 17 58.5 11.5 54C9 52 7 51 3 51.5"
+    "C3 50 4 48.5 6.5 47C6 45.5 4.5 44.5 1.5 44C4 41 5.5 37 6 32C7 19 17 9 32 9Z"
 )
 
-GLYPHS = {
-    "review": '<path d="M40 22h12a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-6l-4 3.5V34h-2a3 3 0 0 1-3-3v-6a3 3 0 0 1 3-3z" fill="#fff"/>'
-    '<circle cx="41.5" cy="28" r="1.3" fill="#8b6cff"/><circle cx="46" cy="28" r="1.3" fill="#8b6cff"/><circle cx="50.5" cy="28" r="1.3" fill="#8b6cff"/>',
-    "updates": '<path d="M46 35V21M40.5 26.5 46 21l5.5 5.5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>',
-    "audit": '<path d="M46 19.5l7.5 3v5.5c0 5-3.2 8.6-7.5 10.2-4.3-1.6-7.5-5.2-7.5-10.2v-5.5z" fill="#fff"/>'
-    '<path d="M42.6 28.6l2.4 2.4 4.4-4.6" stroke="#e5484d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
-    "browserslist": '<circle cx="46" cy="28" r="8" stroke="#fff" stroke-width="2"/>'
-    '<path d="M46 20c-2.8 2.4-4 5-4 8s1.2 5.6 4 8c2.8-2.4 4-5 4-8s-1.2-5.6-4-8zM38 28h16" stroke="#fff" stroke-opacity=".75" stroke-width="1.6"/>',
-    "release": '<path d="M38.5 21.5h8.5l7 7-8.5 8.5-7-7z" fill="#fff"/><circle cx="42.5" cy="25.5" r="1.8" fill="#e0a800"/>',
-    "quality": '<path d="M46 19l2.2 6.8L55 28l-6.8 2.2L46 37l-2.2-6.8L37 28l6.8-2.2z" fill="#fff"/>',
-    "knowledge": '<path d="M46 22.6c-2.4-1.7-5.2-2.4-8.5-2.4v14.6c3.3 0 6.1.7 8.5 2.4 2.4-1.7 5.2-2.4 8.5-2.4V20.2c-3.3 0-6.1.7-8.5 2.4z" fill="#fff"/>'
-    '<path d="M46 22.6v14.6M40.2 25.2c1.4 0 2.6.3 3.6.8M40.2 28.7c1.4 0 2.6.3 3.6.8M51.8 25.2c-1.4 0-2.6.3-3.6.8M51.8 28.7c-1.4 0-2.6.3-3.6.8" stroke="#1f9d55" stroke-width="1.3" stroke-linecap="round"/>',
-    "bundles": '<path d="M46 19l8.5 4.6v9.6L46 37.8l-8.5-4.6v-9.6z" fill="#fff"/>'
-    '<path d="M37.9 23.8 46 28.2l8.1-4.4M46 28.2v9.2" stroke="#0ea5e9" stroke-width="1.7" stroke-linejoin="round"/>',
-    "repos": '<path d="M41 22.5v11M41 30c0-3 1.6-4.4 4.6-4.6l1.4-.1c2.6-.2 4-1.5 4-4" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>'
-    '<circle cx="41" cy="21.5" r="2.6" fill="#fff"/><circle cx="41" cy="34.5" r="2.6" fill="#fff"/><circle cx="51" cy="21.5" r="2.6" fill="#fff"/>',
-    "credentials": '<path d="M41.5 26.5v-2.5a4.5 4.5 0 0 1 9 0v2.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>'
-    '<rect x="38.5" y="26" width="15" height="11.5" rx="2.4" fill="#fff"/>'
-    '<circle cx="46" cy="30.8" r="1.6" fill="#64748b"/><rect x="45.2" y="31" width="1.6" height="3.6" rx=".8" fill="#64748b"/>',
-    "coverage": '<circle cx="46" cy="28" r="7.5" stroke="#fff" stroke-opacity=".4" stroke-width="3.2"/>'
-    '<path d="M46 20.5a7.5 7.5 0 1 1-7.5 7.5" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>',
-    "testids": '<path d="M40.5 19.5 52.5 28l-5.4 1.1 3.2 5.9-2.6 1.4-3.2-5.9-4 3.7z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>',
-    "branches": '<path d="M41 22.5v11M41 24.5c0 3.6 2.6 5.5 7 5.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>'
-    '<circle cx="41" cy="21.5" r="2.6" fill="#fff"/><circle cx="41" cy="34.5" r="2.6" fill="#fff"/><circle cx="51" cy="30" r="2.6" fill="#fff"/>',
-    "ci": '<circle cx="46" cy="29.5" r="7" stroke="#fff" stroke-width="2.4"/><rect x="44.2" y="18.5" width="3.6" height="2.6" rx="1" fill="#fff"/>'
-    '<path d="M46 29.5v-4M46 29.5l2.6 1.8" stroke="#fff" stroke-width="2" stroke-linecap="round"/>',
-    "licenses": '<path d="M46 20v15.5M39 23.5h14M42 36h8M39 23.5l-2.8 6.5M39 23.5l2.8 6.5M53 23.5l-2.8 6.5M53 23.5l2.8 6.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>'
-    '<path d="M36.2 30h5.6a2.8 2.8 0 0 1-5.6 0zM50.2 30h5.6a2.8 2.8 0 0 1-5.6 0z" fill="#fff"/><circle cx="46" cy="20" r="1.6" fill="#fff"/>',
-    "api": '<path d="M42 20.5c-2 0-3 .8-3 2.6v2.6c0 1.4-.8 2.3-2.3 2.3 1.5 0 2.3.9 2.3 2.3v2.6c0 1.8 1 2.6 3 2.6M50 20.5c2 0 3 .8 3 2.6v2.6c0 1.4.8 2.3 2.3 2.3-1.5 0-2.3.9-2.3 2.3v2.6c0 1.8-1 2.6-3 2.6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'
-    '<circle cx="46" cy="28" r="1.8" fill="#fff"/>',
-    "fleet": '<path d="M37.5 30.5h17l-3.2 5.5H40.7z" fill="#fff"/><path d="M46 19v11.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>'
-    '<path d="M47.4 20.5l6.4 8.5h-6.4zM44.6 22.5l-4.6 6.5h4.6z" fill="#fff"/>',
-    "stack": '<path d="M46 19.5l8.5 4.5-8.5 4.5-8.5-4.5z" fill="#fff"/>'
-    '<path d="M37.5 28.5l8.5 4.5 8.5-4.5M37.5 33l8.5 4.5 8.5-4.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
-    "activity": '<path d="M37 28.5h4l2.6-6.5 4.8 13 2.6-6.5h4" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>',
-    "ai": '<path d="M44 22l1.9 6.1L52 30l-6.1 1.9L44 38l-1.9-6.1L36 30l6.1-1.9z" fill="#fff"/>'
-    '<path d="M51.5 17.5l1 2.8 2.8 1-2.8 1-1 2.8-1-2.8-2.8-1 2.8-1z" fill="#fff"/>',
-    "storage": '<rect x="37.5" y="21" width="17" height="14" rx="2.4" fill="#fff"/>'
-    '<path d="M37.5 28h17M40.5 24.5h6M40.5 31.5h6" stroke="#a16207" stroke-width="1.4" stroke-linecap="round"/>'
-    '<circle cx="51.2" cy="24.5" r="1.2" fill="#a16207"/><circle cx="51.2" cy="31.5" r="1.2" fill="#a16207"/>',
-    "auditlog": '<rect x="39.5" y="19.5" width="13" height="17" rx="2.2" fill="#fff"/>'
-    '<path d="M42.5 24h7M42.5 28h7M42.5 32h4.5" stroke="#9f1239" stroke-width="1.6" stroke-linecap="round"/>',
-    "users": '<circle cx="50.8" cy="23.2" r="2.7" fill="#fff" fill-opacity=".6"/><path d="M47 34c.3-3.4 1.8-5.6 4-5.6 2.8 0 4.8 2.4 4.8 5.6z" fill="#fff" fill-opacity=".6"/>'
-    '<circle cx="44" cy="24.2" r="3.3" fill="#fff"/><path d="M37.2 36c0-4 2.9-6.8 6.8-6.8s6.8 2.8 6.8 6.8z" fill="#fff"/>',
-    "automation": '<path d="M48 19l-8.5 10.8h5.6L43.6 37l8.6-11.2h-5.6z" fill="#fff" stroke="#fff" stroke-width="1" stroke-linejoin="round"/>',
-    "jobs": '<path d="M37.5 22.2l1.7 1.7 3.1-3.3M37.5 28.2l1.7 1.7 3.1-3.3M37.5 34.2l1.7 1.7 3.1-3.3" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
-    '<path d="M45.5 22.5h9M45.5 28.5h9M45.5 34.5h6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>',
-    "settings": '<circle cx="46" cy="28" r="7.2" stroke="#fff" stroke-width="3" stroke-dasharray="2.9 2.755"/>'
-    '<circle cx="46" cy="28" r="4.6" stroke="#fff" stroke-width="2.6"/>',
-    "warmup": '<path d="M46 19c.5 3.5 3 5 4.6 7.6 1.4 2.2 1.9 4 1.9 5.4 0 3.6-2.9 6-6.5 6s-6.5-2.4-6.5-6c0-2.6 1.4-4.6 3-5.8.1 1.6.8 2.8 2 3.4-.6-3.7.3-7.5 1.5-10.6z" fill="#fff"/>'
-    '<path d="M46 30.5c1.6 1.4 2.6 2.7 2.6 4 0 1.6-1.2 2.5-2.6 2.5s-2.6-.9-2.6-2.5c0-1.3 1-2.6 2.6-4z" fill="#dc2626"/>',
-    "assets": '<rect x="40.5" y="19.5" width="14" height="11.5" rx="2" fill="#fff" fill-opacity=".55"/>'
-    '<rect x="37" y="23.5" width="14.5" height="12.5" rx="2.2" fill="#fff"/>'
-    '<circle cx="47.6" cy="27.4" r="1.5" fill="#2563eb"/><path d="M39.3 33.8l3.6-4.4 2.6 3 1.7-1.8 2.3 3.2z" fill="#2563eb"/>',
-    "database": '<path d="M39 22.5c0-1.7 3.1-3 7-3s7 1.3 7 3v11c0 1.7-3.1 3-7 3s-7-1.3-7-3z" fill="#fff"/>'
-    '<path d="M39 22.5c0 1.7 3.1 3 7 3s7-1.3 7-3M39 28c0 1.7 3.1 3 7 3s7-1.3 7-3" stroke="#0d9488" stroke-width="1.4"/>',
-    "caches": '<rect x="37" y="20.5" width="18" height="4.6" rx="1.4" fill="#fff"/>'
-    '<path d="M38.5 26.3h15v8.2a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2z" fill="#fff"/>'
-    '<path d="M43.5 29.6h5" stroke="#78350f" stroke-width="1.8" stroke-linecap="round"/>',
-    "libraries": '<rect x="37.5" y="21" width="4" height="15" rx="1" fill="#fff"/><rect x="42.8" y="19" width="4" height="17" rx="1" fill="#fff"/>'
-    '<path d="M48.6 21.6l3.8-1.2 4.4 14.2-3.8 1.2z" fill="#fff"/>'
-    '<path d="M37.5 24h4M42.8 22.5h4M37.5 32.5h4M42.8 32.5h4" stroke="#4d7c0f" stroke-width="1.2"/>',
-    "dependencies": '<path d="M46 21.5 39.5 33.5M46 21.5l6.5 12M39.5 33.5h13" stroke="#fff" stroke-width="1.8"/>'
-    '<circle cx="46" cy="21.5" r="2.8" fill="#fff"/><circle cx="39.5" cy="33.5" r="2.8" fill="#fff"/><circle cx="52.5" cy="33.5" r="2.8" fill="#fff"/>',
-    "chat": '<rect x="44" y="19.5" width="11.5" height="9" rx="2.5" fill="#fff" fill-opacity=".55"/><path d="M52 28.3v3l-3-3z" fill="#fff" fill-opacity=".55"/>'
-    '<path d="M39.5 24.5h8.5a2.5 2.5 0 0 1 2.5 2.5v5a2.5 2.5 0 0 1-2.5 2.5h-4.5l-4 3v-3a2.5 2.5 0 0 1-2.5-2.5v-5a2.5 2.5 0 0 1 2.5-2.5z" fill="#fff"/>'
-    '<path d="M40 28h7M40 31h4.5" stroke="#5b21b6" stroke-width="1.4" stroke-linecap="round"/>',
-    "digests": '<rect x="37.5" y="20.5" width="17" height="15.5" rx="2" fill="#fff"/>'
-    '<rect x="40" y="23" width="12" height="2.2" rx=".6" fill="#065f46"/><rect x="40" y="27.2" width="5" height="5.8" rx=".6" fill="#065f46"/>'
-    '<path d="M47.3 28h4.7M47.3 30.4h4.7M47.3 32.8h4.7" stroke="#065f46" stroke-width="1.2" stroke-linecap="round"/>',
-    "releaseboard": '<rect x="37.5" y="20" width="4.6" height="7" rx="1.2" fill="#fff"/><rect x="37.5" y="28.5" width="4.6" height="5" rx="1.2" fill="#fff"/>'
-    '<rect x="43.7" y="20" width="4.6" height="10.5" rx="1.2" fill="#fff"/>'
-    '<rect x="49.9" y="20" width="4.6" height="4.5" rx="1.2" fill="#fff"/><rect x="49.9" y="26" width="4.6" height="4.5" rx="1.2" fill="#fff"/><rect x="49.9" y="32" width="4.6" height="4.5" rx="1.2" fill="#fff"/>',
-    "mcp": '<path d="M43 25v-5M49 25v-5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>'
-    '<rect x="40" y="24.5" width="12" height="8" rx="2.2" fill="#fff"/><path d="M46 32.5v4.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
-    "slack": '<path d="M43.5 20l-2 16M50.5 20l-2 16M38.5 25.5h15M37.5 31h15" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
-}
 
-VARIANTS = {
-    "review": "#8b6cff",
-    "updates": "#3b82f6",
-    "audit": "#e5484d",
-    "browserslist": "#14b8a6",
-    "release": "#e0a800",
-    "quality": "#ec4899",
-    "knowledge": "#1f9d55",
-    "bundles": "#0ea5e9",
-    "repos": "#4f46e5",
-    "credentials": "#64748b",
-    "coverage": "#65a30d",
-    "testids": "#c026d3",
-    "branches": "#7c3aed",
-    "ci": "#0891b2",
-    "licenses": "#b45309",
-    "api": "#0f766e",
-    "fleet": "#1d4ed8",
-    "stack": "#be123c",
-    "activity": "#059669",
-    "ai": "#9333ea",
-    "storage": "#a16207",
-    "auditlog": "#9f1239",
-    "users": "#db2777",
-    "automation": "#0369a1",
-    "jobs": "#1e293b",
-    "settings": "#52525b",
-    "warmup": "#dc2626",
-    "assets": "#2563eb",
-    "database": "#0d9488",
-    "caches": "#78350f",
-    "libraries": "#4d7c0f",
-    "dependencies": "#155e75",
-    "chat": "#5b21b6",
-    "digests": "#065f46",
-    "releaseboard": "#3730a3",
-    "mcp": "#475569",
-    "slack": "#86198f",
-}
+def shade(color, amount):
+    r, g, b = (int(color[i : i + 2], 16) for i in (1, 3, 5))
+    return "#" + "".join(f"{round(c * (1 - amount)):02x}" for c in (r, g, b))
 
 
-def icon(name="holtkeeper"):
-    if name == "holtkeeper":
-        head = f'<path d="{HEAD}" fill="{ORANGE}"/>{LEFT_EYE}{RIGHT_EYE}'
-    else:
-        clip = f"head-{name}"
-        head = (
-            f'<clipPath id="{clip}"><path d="{HEAD}"/></clipPath>'
-            f'<path d="{HEAD}" fill="{ORANGE}"/>{LEFT_EYE}'
-            f'<g clip-path="url(#{clip})"><rect x="32" width="32" height="64" fill="{VARIANTS[name]}"/>'
-            f'<g transform="translate(44.5 30.5) scale(.74) translate(-46 -28)">{GLYPHS[name]}</g></g>'
-        )
-    return f'<g fill="none">{EARS}{head}{MUZZLE}{KEY}</g>'
+def head(color, inner, ink=INK, nose_opacity=1.0):
+    ears = "".join(
+        f'<circle cx="{x}" cy="16.5" r="8" fill="{shade(color, 0.2)}"/><circle cx="{x}" cy="16.5" r="3.8" fill="{color}"/>'
+        f'<circle cx="{x}" cy="16.5" r="3.8" fill="#fff" fill-opacity=".3"/>'
+        for x in (12.5, 51.5)
+    )
+    return (
+        f'<g fill="none">{ears}<path d="{HEAD}" fill="{color}"/>'
+        f'<ellipse cx="32" cy="50" rx="15" ry="8.5" fill="#fff" fill-opacity=".22"/>'
+        f'<ellipse cx="32" cy="45.2" rx="3.4" ry="2.3" fill="{ink}" fill-opacity="{nose_opacity}"/>{inner}</g>'
+    )
+
+
+def mascot():
+    face = (
+        f'<circle cx="22.5" cy="32" r="3.7" fill="{INK}"/><circle cx="23.8" cy="30.7" r="1.25" fill="#fff"/>'
+        f'<circle cx="41.5" cy="32" r="3.7" fill="{INK}"/><circle cx="42.8" cy="30.7" r="1.25" fill="#fff"/>'
+        f'<path d="M28.6 48.6q1.7 1.9 3.4 0q1.7 1.9 3.4 0" stroke="{INK}" stroke-width="1.3" stroke-linecap="round"/>'
+    )
+    return head(ACCENT, face)
 
 
 CAPABILITIES = [
-    ("review", "Review", "AI review of merge requests: line threads with suggestions, replies, incremental re-review."),
-    ("updates", "Updates", "Package updates across the fleet through Renovate; the agent fixes code when a pipeline breaks."),
-    ("audit", "Audit", "Vulnerabilities from lockfiles of any ecosystem, fixed per package manager, with an expiring allowlist."),
-    ("browserslist", "Browserslist", "Scheduled <code>update-browserslist-db</code> with a before/after diff of the resolved browsers."),
-    ("release", "Release", "Changelog, readiness checks, tags, release notes and manual deploy jobs."),
-    ("quality", "Quality", "Lint, dead code, duplication, secrets, licenses, bundle size and config drift across repositories."),
+    (
+        "review",
+        "Review",
+        "#9d8cff",
+        '<path d="M26.5 21.5h11a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-5.5l-4 3.5v-3.5h-1.5a3 3 0 0 1-3-3v-6a3 3 0 0 1 3-3z" fill="#fff"/>'
+        '<circle cx="28" cy="27.5" r="1.4" fill="{c}"/><circle cx="32" cy="27.5" r="1.4" fill="{c}"/><circle cx="36" cy="27.5" r="1.4" fill="{c}"/>',
+    ),
+    (
+        "updates",
+        "Updates",
+        "#6aa2ff",
+        '<path d="M32 37V21.5M25.5 28 32 21.5l6.5 6.5" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>',
+    ),
+    (
+        "audit",
+        "Audit",
+        "#f2665f",
+        '<path d="M32 20l8 3.2v5.8c0 5.3-3.4 9.1-8 10.8-4.6-1.7-8-5.5-8-10.8v-5.8z" fill="#fff"/>'
+        '<path d="M28.4 29.4l2.5 2.5 4.7-4.9" stroke="{c}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>',
+    ),
+    (
+        "browserslist",
+        "Browserslist",
+        "#2dd4bf",
+        '<circle cx="32" cy="29" r="8.5" stroke="#fff" stroke-width="2.4"/>'
+        '<path d="M32 20.5c-3 2.6-4.3 5.3-4.3 8.5s1.3 5.9 4.3 8.5c3-2.6 4.3-5.3 4.3-8.5s-1.3-5.9-4.3-8.5zM23.5 29h17" stroke="#fff" stroke-width="1.8"/>',
+    ),
+    (
+        "release",
+        "Release",
+        "#f472b6",
+        '<path d="M23.5 21.5h9l7.5 7.5-9 9-7.5-7.5z" fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>'
+        '<circle cx="27.8" cy="25.8" r="2" fill="{c}"/>',
+    ),
+    (
+        "quality",
+        "Quality",
+        "#3ecf8e",
+        '<path d="M32 19.5l2.4 7.1 7.1 2.4-7.1 2.4-2.4 7.1-2.4-7.1-7.1-2.4 7.1-2.4z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>',
+    ),
 ]
 
-FONT = "Helvetica Neue, Helvetica, Arial, sans-serif"
-MONO = "Menlo, SF Mono, monospace"
+
+def capability(name):
+    _, _, color, glyph = next(c for c in CAPABILITIES if c[0] == name)
+    return head(color, glyph.replace("{c}", color), nose_opacity=0.8)
 
 
-def background(w, h, accent, cx=0.2, cy=0.55, strip=True):
-    bar = (
-        f'<linearGradient id="bar" x1="0" x2="1"><stop offset="0" stop-color="{ORANGE}"/><stop offset="1" stop-color="{AMBER}"/></linearGradient>'
-        if strip
+@functools.cache
+def font(name):
+    path = FONTS / f"{name}.ttf"
+    blob = hb.Blob.from_file_path(str(path))
+    return TTFont(path), hb.Font(hb.Face(blob))
+
+
+def text(s, x, y, name, size, fill, anchor="start", tracking=0.0):
+    tt, hbfont = font(name)
+    upem = tt["head"].unitsPerEm
+    buf = hb.Buffer()
+    buf.add_str(s)
+    buf.guess_segment_properties()
+    hb.shape(hbfont, buf, {"kern": True, "liga": True})
+    glyphs = tt.getGlyphSet()
+    order = tt.getGlyphOrder()
+    scale = size / upem
+    pen_x, parts = 0.0, []
+    for info, pos in zip(buf.glyph_infos, buf.glyph_positions):
+        pen = SVGPathPen(glyphs)
+        glyphs[order[info.codepoint]].draw(pen)
+        d = pen.getCommands()
+        if d:
+            parts.append(f'<path transform="translate({pen_x + pos.x_offset:.1f} 0)" d="{d}"/>')
+        pen_x += pos.x_advance + tracking * upem
+    width = (pen_x - tracking * upem) * scale
+    start = {"start": x, "middle": x - width / 2, "end": x - width}[anchor]
+    return f'<g fill="{fill}" transform="translate({start:.2f} {y}) scale({scale:.5f} {-scale:.5f})">{"".join(parts)}</g>', width
+
+
+def label(*args, **kwargs):
+    return text(*args, **kwargs)[0]
+
+
+def background(w, h, cx, cy, r, glow=0.18, grid=True, rounded=0):
+    shape = f'rx="{rounded}"' if rounded else ""
+    lines = (
+        f'<pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#fff" stroke-opacity=".035"/></pattern>'
+        if grid
         else ""
     )
     return f"""<defs>
-  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#120c08"/><stop offset="1" stop-color="#1e140d"/>
-  </linearGradient>
-  <radialGradient id="glow" cx="{w * cx}" cy="{h * cy}" r="{h * 0.75}" gradientUnits="userSpaceOnUse">
-    <stop offset="0" stop-color="{accent}" stop-opacity=".24"/><stop offset="1" stop-color="{accent}" stop-opacity="0"/>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{PANEL}"/><stop offset="1" stop-color="{BG}"/></linearGradient>
+  <radialGradient id="glow" cx="{cx}" cy="{cy}" r="{r}" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="{ACCENT}" stop-opacity="{glow}"/><stop offset="1" stop-color="{ACCENT}" stop-opacity="0"/>
   </radialGradient>
-  <pattern id="dots" width="32" height="32" patternUnits="userSpaceOnUse">
-    <circle cx="2" cy="2" r="1.4" fill="#fff" fill-opacity=".05"/>
-  </pattern>
-  {bar}
+  {lines}
 </defs>
-<rect width="{w}" height="{h}" fill="url(#bg)"/>
-<rect width="{w}" height="{h}" fill="url(#dots)"/>
-<rect width="{w}" height="{h}" fill="url(#glow)"/>
-{f'<rect y="{h - 10}" width="{w}" height="10" fill="url(#bar)"/>' if strip else ""}"""
+<rect width="{w}" height="{h}" {shape} fill="url(#bg)"/>
+{f'<rect width="{w}" height="{h}" {shape} fill="url(#grid)"/>' if grid else ""}
+<rect width="{w}" height="{h}" {shape} fill="url(#glow)"/>"""
 
 
-def chips(x, y, items, accent):
+def place(svg_inner, cx, cy, size):
+    k = size / 64
+    return f'<g transform="translate({cx - 32 * k:.2f} {cy - 34.25 * k:.2f}) scale({k:.4f})">{svg_inner}</g>'
+
+
+def chips(x, y, items):
     out, cx = [], x
     for c in items:
-        width = 26 + len(c) * 14.5
+        body, width = text(c, 0, 0, "geist-mono-500", 20, SOFT)
+        pill = width + 36
         out.append(
-            f'<rect x="{cx}" y="{y}" width="{width}" height="44" rx="22" fill="{accent}" fill-opacity=".14" stroke="{accent}" stroke-opacity=".5"/>'
-            f'<text x="{cx + width / 2}" y="{y + 29}" text-anchor="middle" font-family="{FONT}" font-size="22" font-weight="500" fill="#f1e6dc">{c}</text>'
+            f'<rect x="{cx}" y="{y}" width="{pill:.1f}" height="42" rx="21" fill="{RAISE}" stroke="#fff" stroke-opacity=".13"/>'
+            + label(c, cx + 18, y + 28, "geist-mono-500", 20, SOFT)
         )
-        cx += width + 12
+        cx += pill + 10
     return "".join(out)
 
 
 def social():
     w, h = 1280, 640
     lines = ["Keeps a fleet of Git repositories in order:", "AI review, dependency updates, audits", "and releases on GitLab and GitHub."]
-    text = "".join(
-        f'<text x="520" y="{318 + i * 46}" font-family="{FONT}" font-size="34" fill="#cdbcad">{l}</text>' for i, l in enumerate(lines)
-    )
+    body = "".join(label(l, 520, 330 + i * 46, "geist-400", 32, SOFT) for i, l in enumerate(lines))
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">
-{background(w, h, ORANGE)}
-<g transform="translate(96 150) scale(5.4)">{icon()}</g>
-<text x="520" y="188" font-family="{MONO}" font-size="30" fill="{ORANGE}">holtkeeper/<tspan fill="#a8907d">holtkeeper</tspan></text>
-<text x="520" y="268" font-family="{FONT}" font-size="80" font-weight="700" fill="#fbf5ef">Holtkeeper</text>
-{text}
-{chips(520, 488, ["TypeScript", "Bun", "GitLab", "GitHub", "MIT"], ORANGE)}
-<text x="1220" y="590" text-anchor="end" font-family="{MONO}" font-size="22" fill="#8a7464">github.com/holtkeeper</text>
+{background(w, h, 260, 330, 420)}
+{place(mascot(), 270, 330, 330)}
+{label("holtkeeper/holtkeeper", 520, 180, "geist-mono-500", 26, ACCENT)}
+{label("Holtkeeper", 516, 268, "geist-700", 84, FG, tracking=-0.025)}
+{body}
+{chips(520, 490, ["TypeScript", "Bun", "GitLab", "GitHub", "MIT"])}
+{label("github.com/holtkeeper", 1220, 594, "geist-mono-500", 20, MUTED, anchor="end")}
 </svg>"""
 
 
 def profile_banner():
     w, h = 1280, 420
-    row = "".join(
-        f'<g transform="translate({540 + i * 102} 282) scale(1.35)">{icon(name)}</g>'
-        for i, name in enumerate(["holtkeeper", *(c[0] for c in CAPABILITIES)])
-    )
+    row = "".join(place(capability(c[0]), 572 + i * 76, 336, 60) for i, c in enumerate(CAPABILITIES))
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">
-{background(w, h, ORANGE)}
-<g transform="translate(110 62) scale(4.4)">{icon()}</g>
-<text x="540" y="150" font-family="{FONT}" font-size="92" font-weight="700" fill="#fbf5ef">Holtkeeper</text>
-<text x="544" y="208" font-family="{FONT}" font-size="34" fill="#cdbcad">The keeper of your repository holt.</text>
-<text x="544" y="252" font-family="{FONT}" font-size="24" fill="#9c8574">Review, updates, audits and releases for a fleet of Git repos.</text>
+{background(w, h, 270, 215, 330)}
+{place(mascot(), 270, 210, 290)}
+{label("holtkeeper/holtkeeper", 540, 96, "geist-mono-500", 22, ACCENT)}
+{label("Holtkeeper", 536, 178, "geist-700", 86, FG, tracking=-0.025)}
+{label("The keeper of your repository holt.", 540, 228, "geist-400", 30, SOFT)}
+{label("Review, updates, audits and releases for a fleet of Git repos.", 540, 266, "geist-400", 22, MUTED)}
 {row}
 </svg>"""
 
 
-def avatar():
-    w = 512
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{w}" viewBox="0 0 {w} {w}">
-{background(w, w, ORANGE, 0.5, 0.5, strip=False)}
-<g transform="translate(65 28) scale(6)">{icon()}</g>
+def avatar(w=512):
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{w}" viewBox="0 0 512 512">
+{background(512, 512, 256, 280, 330, glow=0.22, grid=False)}
+{place(mascot(), 256, 262, 400)}
 </svg>"""
 
 
 PANDORA = f"""<g fill="none">
-<circle cx="32" cy="24" r="20" fill="{AMBER}" opacity=".18"/>
-<circle cx="32" cy="26" r="11" fill="{AMBER}" opacity=".22"/>
-<path d="M12 34h40v18a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4z" fill="#8a4a24"/>
-<path d="M12 40h40v4H12z" fill="#6b3518"/>
-<rect x="28.5" y="41" width="7" height="8" rx="1.5" fill="{AMBER}"/>
-<path d="M10 31.5 45.5 17l2.4 5.6L12.4 37z" fill="#a85a2c"/>
-<path d="M10 31.5 45.5 17" stroke="#d07a42" stroke-width="1.4" stroke-linecap="round"/>
-<circle cx="24" cy="14" r="1.8" fill="{AMBER}"/>
-<circle cx="34" cy="7" r="1.4" fill="#ffe08a"/>
-<circle cx="40" cy="27" r="1.6" fill="{ORANGE}"/>
-<circle cx="29" cy="21" r="1.2" fill="#ffe08a"/>
-<circle cx="19" cy="24" r="1" fill="{ORANGE}"/>
-<path d="M44 9l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z" fill="#ffe08a"/>
+<circle cx="32" cy="24" r="20" fill="{ACCENT}" opacity=".16"/>
+<circle cx="32" cy="26" r="11" fill="{ACCENT}" opacity=".22"/>
+<path d="M12 34h40v18a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4z" fill="#27272a"/>
+<path d="M12 40h40v4H12z" fill="#1c1c20"/>
+<rect x="28.5" y="41" width="7" height="8" rx="1.5" fill="{ACCENT}"/>
+<path d="M10 31.5 45.5 17l2.4 5.6L12.4 37z" fill="#3f3f46"/>
+<path d="M10 31.5 45.5 17" stroke="#52525b" stroke-width="1.4" stroke-linecap="round"/>
+<circle cx="24" cy="14" r="1.8" fill="{ACCENT}"/>
+<circle cx="34" cy="7" r="1.4" fill="#ffd591"/>
+<circle cx="40" cy="27" r="1.6" fill="{ACCENT}"/>
+<circle cx="29" cy="21" r="1.2" fill="#ffd591"/>
+<circle cx="19" cy="24" r="1" fill="{ACCENT}"/>
+<path d="M44 9l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z" fill="#ffd591"/>
 </g>"""
 
 
 def disclaimer():
     w, h = 1280, 260
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">
-<defs>
-  <linearGradient id="dbg" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#160e08"/><stop offset="1" stop-color="#0d0b09"/>
-  </linearGradient>
-  <radialGradient id="dglow" cx="150" cy="130" r="260" gradientUnits="userSpaceOnUse">
-    <stop offset="0" stop-color="{AMBER}" stop-opacity=".28"/><stop offset="1" stop-color="{AMBER}" stop-opacity="0"/>
-  </radialGradient>
-  <pattern id="ddots" width="28" height="28" patternUnits="userSpaceOnUse">
-    <circle cx="2" cy="2" r="1.3" fill="#fff" fill-opacity=".05"/>
-  </pattern>
-</defs>
-<rect x="1" y="1" width="{w - 2}" height="{h - 2}" rx="28" fill="url(#dbg)" stroke="{AMBER}" stroke-opacity=".45" stroke-width="2"/>
-<rect x="1" y="1" width="{w - 2}" height="{h - 2}" rx="28" fill="url(#ddots)"/>
-<rect x="1" y="1" width="{w - 2}" height="{h - 2}" rx="28" fill="url(#dglow)"/>
+{background(w, h, 160, 130, 260, glow=0.2, rounded=24)}
+<rect x=".5" y=".5" width="{w - 1}" height="{h - 1}" rx="24" fill="none" stroke="{ACCENT}" stroke-opacity=".4"/>
 <g transform="translate(62 34) scale(3)">{PANDORA}</g>
-<text x="330" y="74" font-family="{MONO}" font-size="22" letter-spacing="3" fill="{AMBER}">⚠ DISCLAIMER · PANDORA'S BOX</text>
-<text x="330" y="128" font-family="{FONT}" font-size="44" font-weight="700" fill="#f7f1ea">Fully AI-generated. Use at your own risk.</text>
-<text x="330" y="172" font-family="{FONT}" font-size="25" fill="#cbbfb2">Not a single line of code was written or reviewed by a human.</text>
-<text x="330" y="208" font-family="{FONT}" font-size="25" fill="#cbbfb2">Written by Claude through Claude Code. Open with care.</text>
+{label("DISCLAIMER · PANDORA'S BOX", 330, 74, "geist-mono-500", 20, ACCENT, tracking=0.12)}
+{label("Fully AI-generated. Use at your own risk.", 328, 128, "geist-700", 42, FG, tracking=-0.015)}
+{label("Not a single line of code was written or reviewed by a human.", 330, 172, "geist-400", 24, SOFT)}
+{label("Written by Claude through Claude Code. Open with care.", 330, 208, "geist-400", 24, SOFT)}
 </svg>"""
 
 
@@ -304,20 +248,16 @@ def write(name, svg, width):
     subprocess.run(["rsvg-convert", "-w", str(width), "-o", str(OUT / f"{name}.png"), str(path)], check=True)
 
 
-def icon_svg(name):
-    return f'<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 64 64">{icon(name)}</svg>'
+def icon_svg(inner):
+    return f'<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 64 64">{inner}</svg>'
 
 
 EMOJI_OUT = ROOT / "slack" / "emoji"
-EMOJI_HEAD = (
-    "M32 9C47 9 57 19 58 32C58.5 37 60 41 62.5 44C59.5 44.5 58 45.5 57.5 47C60 48.5 61 50 61 51.5"
-    "C57 51 55 52 52.5 54C47 58.5 40 60 32 60C24 60 17 58.5 11.5 54C9 52 7 51 3 51.5"
-    "C3 50 4 48.5 6.5 47C6 45.5 4.5 44.5 1.5 44C4 41 5.5 37 6 32C7 19 17 9 32 9Z"
-)
+EMOJI_INK = "#1a120c"
 EMOJI_STATUS = {
     "reviewing": ("#8b6cff", "#6a4fe0", "#fff"),
     "clean": ("#1f9d55", "#157a41", "#fff"),
-    "minor": ("#fbbf24", "#d99a06", INK),
+    "minor": ("#fbbf24", "#d99a06", EMOJI_INK),
     "changes": ("#e5484d", "#bf2f34", "#fff"),
     "skipped": ("#7c8491", "#5d6470", "#fff"),
 }
@@ -346,9 +286,9 @@ def emoji(status, t=0.0):
     )
     nose = 'fill-opacity="1"' if status == "minor" else 'fill-opacity=".8"'
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 64 64">
-<g fill="none">{ears}<path d="{EMOJI_HEAD}" fill="{color}"/>
+<g fill="none">{ears}<path d="{HEAD}" fill="{color}"/>
 <ellipse cx="32" cy="50" rx="15" ry="8.5" fill="#fff" fill-opacity=".22"/>
-<ellipse cx="32" cy="45.2" rx="3.4" ry="2.3" fill="{INK}" {nose}/>
+<ellipse cx="32" cy="45.2" rx="3.4" ry="2.3" fill="{EMOJI_INK}" {nose}/>
 <g transform="translate({dx} {dy})">{emoji_glyph(status, ink, 32, 29.5, 17)}</g></g>
 </svg>"""
 
@@ -382,12 +322,12 @@ def write_animated(status, frames=16, ms=90):
 OUT.mkdir(parents=True, exist_ok=True)
 write("banner", profile_banner(), 1280)
 write("avatar", avatar(), 512)
-write("slack-bot", avatar(), 1024)
+write("slack-bot", avatar(1024), 1024)
 write("ai-disclaimer", disclaimer(), 1280)
 write("social-holtkeeper", social(), 1280)
-write("icon-holtkeeper", icon_svg("holtkeeper"), 128)
-for name in VARIANTS:
-    write(f"icon-{name}", icon_svg(name), 128)
+write("icon-holtkeeper", icon_svg(mascot()), 128)
+for name, *_ in CAPABILITIES:
+    write(f"icon-{name}", icon_svg(capability(name)), 128)
 for status in EMOJI_STATUS:
     write_emoji(status)
 write_animated("reviewing")

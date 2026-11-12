@@ -1,7 +1,7 @@
 display_information:
   name: Holtkeeper
   description: "Keeps your Git repositories in order: reviews, updates, audits and releases."
-  background_color: "#1e140d"
+  background_color: "#0b0b0c"
   long_description: |
     Holtkeeper watches a fleet of GitLab and GitHub repositories and brings what needs a person to Slack.
 

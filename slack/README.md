@@ -55,7 +55,7 @@ in-progress status moves: finished statuses stay still so a channel full of them
 | App name           | Holtkeeper                                                                  |
 | Bot display name   | holtkeeper                                                                  |
 | Short description  | Keeps your Git repositories in order: reviews, updates, audits and releases. |
-| Background color   | `#1E140D`                                                                   |
+| Background color   | `#0B0B0C`                                                                   |
 
 Long description:
 
@@ -75,16 +75,16 @@ Long description:
 
 ## Colors
 
-The palette of the mascot (same constants as `scripts/render.py`):
+The Graphite palette of the web UI, which the mascot and banners use too (same constants as
+`scripts/render.py`):
 
-| Name   | Hex       | Use                                              |
-| ------ | --------- | ------------------------------------------------ |
-| Ink    | `#1A120C` | text on light, eyes; app background in Slack     |
-| Night  | `#1E140D` | tile background (Slack "Background color")       |
-| Orange | `#FF7A1A` | primary accent: the head, attachment color bar   |
-| Ember  | `#D95A0B` | pressed and hover states, outer ears             |
-| Amber  | `#FFB547` | highlights: key, speech bubble, warnings         |
-| Cream  | `#FFE6CC` | muzzle, soft backgrounds                         |
+| Name   | Hex       | Use                                                   |
+| ------ | --------- | ----------------------------------------------------- |
+| Bg     | `#0B0B0C` | tile background; Slack "Background color"             |
+| Panel  | `#111113` | raised surfaces, the top of tile gradients            |
+| Fg     | `#EDEDEF` | text on dark                                          |
+| Muted  | `#93939B` | secondary text                                        |
+| Accent | `#F0A63A` | the one accent: the mascot, links, attachment color bar |
 
-Message tone colors for attachment bars, if a message uses them: success `#1F9D55`, warning
-`#FFB547`, danger `#E5484D`, info `#0EA5E9`, neutral `#FF7A1A`.
+Message tone colors for attachment bars, as in the web UI: success `#3ECF8E`, warning `#F0B03A`,
+danger `#F2665F`, info `#6AA2FF`, neutral `#F0A63A`.
