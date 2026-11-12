@@ -5,9 +5,9 @@ display_information:
   long_description: |
     Holtkeeper watches a fleet of GitLab and GitHub repositories and brings what needs a person to Slack.
 
-    • Reviews: a summary when an AI review lands on a merge request, and a ping when a thread waits for an answer.
+    • Reviews: a status emoji on messages that link a merge request, updated as the AI review runs and finishes.
     • Updates and audits: failed dependency updates, new vulnerabilities and allowlist entries about to expire.
-    • Releases: readiness checks, changelogs and a button to start the deploy job.
+    • Releases: announcements of new versions with grouped changes, tasks, breaking changes and the repositories an upgrade would break.
     • Ask: mention @holtkeeper in a thread or send it a direct message to ask about a repository, a package or a job.
 
     Buttons in its messages run the same commands as the web panel, under your own permissions.
@@ -15,3 +15,26 @@ features:
   bot_user:
     display_name: holtkeeper
     always_online: true
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read
+      - channels:history
+      - channels:read
+      - chat:write
+      - chat:write.public
+      - commands
+      - groups:history
+      - groups:read
+      - im:history
+      - reactions:write
+      - users:read
+settings:
+  event_subscriptions:
+    request_url: https://holtkeeper.example.com/api/slack/events
+    bot_events:
+      - message.channels
+      - message.groups
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false

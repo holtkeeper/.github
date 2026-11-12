@@ -6,6 +6,22 @@ Information** of the app at [api.slack.com/apps](https://api.slack.com/apps), or
 
 <img src="../profile/assets/slack-bot.png" width="160" alt="Holtkeeper Slack bot avatar">
 
+## Permissions and events
+
+[`manifest.yml`](manifest.yml) lists the bot scopes and events. The ones the current features need:
+
+| Scope              | For                                                                  |
+| ------------------ | -------------------------------------------------------------------- |
+| `channels:history` | read messages in public channels the bot is in, to find merge request links |
+| `groups:history`   | the same in private channels                                         |
+| `reactions:write`  | set the review status emoji on those messages                        |
+| `chat:write`       | post release announcements and the per-merge-request status list    |
+
+Events: `message.channels` and `message.groups`, sent to `https://<your Holtkeeper host>/api/slack/events`.
+Replace the example host in the manifest with yours. Slack checks the URL when you save it, so turn
+Event Subscriptions on after Holtkeeper has the app's bot token and signing secret. After changing
+scopes, reinstall the app to the workspace.
+
 ## Icon
 
 [`profile/assets/slack-bot.png`](../profile/assets/slack-bot.png): the organization avatar at
@@ -47,11 +63,12 @@ Long description:
 > Holtkeeper watches a fleet of GitLab and GitHub repositories and brings what needs a person to
 > Slack.
 >
-> • Reviews: a summary when an AI review lands on a merge request, and a ping when a thread waits
-> for an answer.
+> • Reviews: a status emoji on messages that link a merge request, updated as the AI review runs
+> and finishes.
 > • Updates and audits: failed dependency updates, new vulnerabilities and allowlist entries about to
 > expire.
-> • Releases: readiness checks, changelogs and a button to start the deploy job.
+> • Releases: announcements of new versions with grouped changes, tasks, breaking changes and the
+> repositories an upgrade would break.
 > • Ask: mention @holtkeeper in a thread or send it a direct message to ask about a repository, a
 > package or a job.
 >
