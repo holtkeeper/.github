@@ -309,45 +309,47 @@ def icon_svg(name):
 
 
 EMOJI_OUT = ROOT / "slack" / "emoji"
-EYES = {
-    "open": lambda dx=0.0: (
-        f'<circle cx="23" cy="32" r="3.8" fill="{INK}"/><circle cx="{24.2 + dx}" cy="30.8" r="1.2" fill="#fff"/>'
-        f'<circle cx="41" cy="32" r="3.8" fill="{INK}"/><circle cx="{42.2 + dx}" cy="30.8" r="1.2" fill="#fff"/>'
-    ),
-    "look": lambda dx=0.0: (
-        f'<circle cx="23" cy="32" r="4.4" fill="#fff"/><circle cx="{23 + dx}" cy="32.4" r="2.9" fill="{INK}"/>'
-        f'<circle cx="41" cy="32" r="4.4" fill="#fff"/><circle cx="{41 + dx}" cy="32.4" r="2.9" fill="{INK}"/>'
-    ),
-    "happy": lambda dx=0.0: f'<path d="M19.5 33.5q3.5-4.5 7 0M37.5 33.5q3.5-4.5 7 0" stroke="{INK}" stroke-width="2.4" stroke-linecap="round"/>',
-    "sleep": lambda dx=0.0: f'<path d="M19.5 32.5h7M37.5 32.5h7" stroke="{INK}" stroke-width="2.4" stroke-linecap="round"/>',
+EMOJI_HEAD = (
+    "M32 9C47 9 57 19 58 32C58.5 37 60 41 62.5 44C59.5 44.5 58 45.5 57.5 47C60 48.5 61 50 61 51.5"
+    "C57 51 55 52 52.5 54C47 58.5 40 60 32 60C24 60 17 58.5 11.5 54C9 52 7 51 3 51.5"
+    "C3 50 4 48.5 6.5 47C6 45.5 4.5 44.5 1.5 44C4 41 5.5 37 6 32C7 19 17 9 32 9Z"
+)
+EMOJI_STATUS = {
+    "reviewing": ("#8b6cff", "#6a4fe0", "#fff"),
+    "clean": ("#1f9d55", "#157a41", "#fff"),
+    "minor": ("#fbbf24", "#d99a06", INK),
+    "changes": ("#e5484d", "#bf2f34", "#fff"),
+    "skipped": ("#7c8491", "#5d6470", "#fff"),
 }
-BADGE = {
-    "reviewing": ("#8b6cff", lambda t: (
-        f'<g transform="translate({1.6 * math.cos(t)} {1.6 * math.sin(t)})">'
-        f'<circle cx="46.6" cy="44.6" r="5" stroke="#fff" stroke-width="3"/>'
-        f'<path d="M50.3 48.3l4 4" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/></g>'
-    )),
-    "clean": ("#1f9d55", lambda t: '<path d="M41.5 46.5l4.5 4.5 8.5-9" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>'),
-    "minor": ("#fbbf24", lambda t: f'<path d="M48 39.5v8" stroke="{INK}" stroke-width="3.8" stroke-linecap="round"/><circle cx="48" cy="53" r="2.3" fill="{INK}"/>'),
-    "changes": ("#e5484d", lambda t: '<path d="M43 41l10 10M53 41l-10 10" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/>'),
-    "skipped": ("#7c8491", lambda t: '<path d="M42 46h12" stroke="#fff" stroke-width="3.8" stroke-linecap="round"/>'),
-}
-FACE = {"reviewing": "look", "clean": "happy", "minor": "open", "changes": "open", "skipped": "sleep"}
+
+
+def emoji_glyph(status, ink, cx, cy, size):
+    k = size / 10
+    w = 2.4 * k
+    return {
+        "reviewing": f'<circle cx="{cx - k}" cy="{cy - k}" r="{3.6 * k}" stroke="{ink}" stroke-width="{w}"/>'
+        f'<path d="M{cx + 1.8 * k} {cy + 1.8 * k}l{3 * k} {3 * k}" stroke="{ink}" stroke-width="{w * 1.1}" stroke-linecap="round"/>',
+        "clean": f'<path d="M{cx - 4.6 * k} {cy + 0.2 * k}l{3.2 * k} {3.2 * k} {6.2 * k}-{6.6 * k}" stroke="{ink}" stroke-width="{w}" stroke-linecap="round" stroke-linejoin="round"/>',
+        "minor": f'<path d="M{cx} 22.5V37.5" stroke="{ink}" stroke-width="{w * 1.05}" stroke-linecap="round"/>',
+        "changes": f'<path d="M{cx - 3.8 * k} {cy - 3.8 * k}l{7.6 * k} {7.6 * k}M{cx + 3.8 * k} {cy - 3.8 * k}l-{7.6 * k} {7.6 * k}" stroke="{ink}" stroke-width="{w}" stroke-linecap="round"/>',
+        "skipped": f'<path d="M{cx - 4.5 * k} {cy}h{9 * k}" stroke="{ink}" stroke-width="{w * 1.05}" stroke-linecap="round"/>',
+    }[status]
 
 
 def emoji(status, t=0.0):
-    color, glyph = BADGE[status]
-    dx = 1.3 * math.sin(t) if status == "reviewing" else 0.0
-    halo = (
-        f'<g fill="{color}" stroke="{color}" stroke-width="5.5" stroke-linejoin="round">'
-        f'<circle cx="13.5" cy="25.5" r="4.6"/><circle cx="50.5" cy="25.5" r="4.6"/><path d="{HEAD}"/></g>'
+    color, dark, ink = EMOJI_STATUS[status]
+    dx, dy = (1.4 * math.cos(t), 1.4 * math.sin(t)) if status == "reviewing" else (0.0, 0.0)
+    tint = '<circle cx="{x}" cy="16.5" r="3.8" fill="#fff" fill-opacity=".3"/>'
+    ears = "".join(
+        f'<circle cx="{x}" cy="16.5" r="8" fill="{dark}"/><circle cx="{x}" cy="16.5" r="3.8" fill="{color}"/>{tint.format(x=x)}'
+        for x in (12.5, 51.5)
     )
-    head = f'{halo}<g fill="none">{EARS}<path d="{HEAD}" fill="{ORANGE}"/>{EYES[FACE[status]](dx)}{MUZZLE.split("<path", 1)[0]}<ellipse cx="32" cy="38.2" rx="3.3" ry="2.3" fill="{INK}"/></g>'
+    nose = 'fill-opacity="1"' if status == "minor" else 'fill-opacity=".8"'
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 64 64">
-<mask id="cut"><rect width="64" height="64" fill="#fff"/><circle cx="47" cy="46" r="18.5" fill="#000"/></mask>
-<g mask="url(#cut)"><g transform="translate(-6.4 -11.8) scale(1.1)">{head}</g></g>
-<circle cx="47" cy="46" r="16.5" fill="{color}"/>
-<g fill="none" transform="translate(47 46) scale(1.12) translate(-48 -46)">{glyph(t)}</g>
+<g fill="none">{ears}<path d="{EMOJI_HEAD}" fill="{color}"/>
+<ellipse cx="32" cy="50" rx="15" ry="8.5" fill="#fff" fill-opacity=".22"/>
+<ellipse cx="32" cy="45.2" rx="3.4" ry="2.3" fill="{INK}" {nose}/>
+<g transform="translate({dx} {dy})">{emoji_glyph(status, ink, 32, 29.5, 17)}</g></g>
 </svg>"""
 
 
@@ -386,6 +388,6 @@ write("social-holtkeeper", social(), 1280)
 write("icon-holtkeeper", icon_svg("holtkeeper"), 128)
 for name in VARIANTS:
     write(f"icon-{name}", icon_svg(name), 128)
-for status in BADGE:
+for status in EMOJI_STATUS:
     write_emoji(status)
 write_animated("reviewing")

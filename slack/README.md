@@ -32,8 +32,7 @@ clear of them.
 
 Custom emoji for the review status reactions, in [`emoji/`](emoji). Upload them under
 **Customize workspace → Emoji** with the names below, then set those names in the review status
-settings instead of the defaults. Each one is the mascot's head outlined in the status color with a status badge in the corner:
-the outline and badge carry the meaning at 22 px, the face backs them up when the emoji is shown larger.
+settings instead of the defaults. Each one is the mascot's head drawn in the status color with the status sign on its forehead: the color and sign carry the meaning at reaction size (16 px), the ears and muzzle keep it recognizable as Holtkeeper. The dot of the exclamation mark is the nose.
 
 | Status                         | Name              | File                                                              | Default |
 | ------------------------------ | ----------------- | ----------------------------------------------------------------- | ------- |
