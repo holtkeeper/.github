@@ -47,13 +47,28 @@ def head(color, inner, ink=INK, nose_opacity=1.0):
     )
 
 
+FUR = "#9c7a5e"
+FUR_EAR = "#76593f"
+FUR_MUZZLE = "#eadccb"
+OTTER_MASK = (
+    "M9 33.5c4-6.5 12.5-7.5 17.5-3.5 3 2.4 8 2.4 11 0 5-4 13.5-3 17.5 3.5"
+    "-4.5 4-12 4.5-17 1.8-3.2-1.7-8.8-1.7-12 0-5 2.7-12.5 2.2-17-1.8z"
+)
+
+
 def mascot():
-    face = (
-        f'<circle cx="22.5" cy="32" r="3.7" fill="{INK}"/><circle cx="23.8" cy="30.7" r="1.25" fill="#fff"/>'
-        f'<circle cx="41.5" cy="32" r="3.7" fill="{INK}"/><circle cx="42.8" cy="30.7" r="1.25" fill="#fff"/>'
-        f'<path d="M28.6 48.6q1.7 1.9 3.4 0q1.7 1.9 3.4 0" stroke="{INK}" stroke-width="1.3" stroke-linecap="round"/>'
+    ears = "".join(
+        f'<circle cx="{x}" cy="16.5" r="8" fill="{FUR_EAR}"/><circle cx="{x}" cy="16.5" r="3.8" fill="{FUR_MUZZLE}" fill-opacity=".55"/>'
+        for x in (12.5, 51.5)
     )
-    return head(ACCENT, face)
+    eyes = "".join(
+        f'<circle cx="{x}" cy="32" r="3.2" fill="{INK}"/><circle cx="{x + 1.05}" cy="30.95" r="1.05" fill="#fff"/>' for x in (21.5, 42.5)
+    )
+    return (
+        f'<g fill="none">{ears}<path d="{HEAD}" fill="{FUR}"/><ellipse cx="32" cy="50" rx="15" ry="8.5" fill="{FUR_MUZZLE}"/>'
+        f'<path d="{OTTER_MASK}" fill="{INK}" fill-opacity=".34"/>{eyes}'
+        f'<ellipse cx="32" cy="45.2" rx="3.4" ry="2.3" fill="{INK}"/></g>'
+    )
 
 
 CAPABILITIES = [
