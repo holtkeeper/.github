@@ -1,0 +1,17 @@
+display_information:
+  name: Holtkeeper
+  description: "Keeps your Git repositories in order: reviews, updates, audits and releases."
+  background_color: "#1e140d"
+  long_description: |
+    Holtkeeper watches a fleet of GitLab and GitHub repositories and brings what needs a person to Slack.
+
+    • Reviews: a summary when an AI review lands on a merge request, and a ping when a thread waits for an answer.
+    • Updates and audits: failed dependency updates, new vulnerabilities and allowlist entries about to expire.
+    • Releases: readiness checks, changelogs and a button to start the deploy job.
+    • Ask: mention @holtkeeper in a thread or send it a direct message to ask about a repository, a package or a job.
+
+    Buttons in its messages run the same commands as the web panel, under your own permissions.
+features:
+  bot_user:
+    display_name: holtkeeper
+    always_online: true

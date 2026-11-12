@@ -254,6 +254,19 @@ def avatar():
 </svg>"""
 
 
+def slack_avatar():
+    w = 1024
+    bubble = (
+        f'<path d="M742 118h176a44 44 0 0 1 44 44v84a44 44 0 0 1-44 44h-96l-58 48v-48h-22a44 44 0 0 1-44-44v-84a44 44 0 0 1 44-44z" fill="{AMBER}" stroke="#1f150e" stroke-width="20" stroke-linejoin="round" paint-order="stroke"/>'
+        f'<circle cx="782" cy="204" r="17" fill="{INK}"/><circle cx="830" cy="204" r="17" fill="{INK}"/><circle cx="878" cy="204" r="17" fill="{INK}"/>'
+    )
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{w}" viewBox="0 0 {w} {w}">
+{background(w, w, ORANGE, 0.5, 0.58, strip=False)}
+<g transform="translate(64 30) scale(14)">{icon()}</g>
+<g transform="translate(-8 40)">{bubble}</g>
+</svg>"""
+
+
 PANDORA = f"""<g fill="none">
 <circle cx="32" cy="24" r="20" fill="{AMBER}" opacity=".18"/>
 <circle cx="32" cy="26" r="11" fill="{AMBER}" opacity=".22"/>
@@ -309,6 +322,7 @@ def icon_svg(name):
 OUT.mkdir(parents=True, exist_ok=True)
 write("banner", profile_banner(), 1280)
 write("avatar", avatar(), 512)
+write("slack-bot", slack_avatar(), 1024)
 write("ai-disclaimer", disclaimer(), 1280)
 write("social-holtkeeper", social(), 1280)
 write("icon-holtkeeper", icon_svg("holtkeeper"), 128)
