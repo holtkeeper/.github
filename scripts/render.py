@@ -338,12 +338,16 @@ FACE = {"reviewing": "look", "clean": "happy", "minor": "open", "changes": "open
 def emoji(status, t=0.0):
     color, glyph = BADGE[status]
     dx = 1.3 * math.sin(t) if status == "reviewing" else 0.0
-    head = f'<g fill="none">{EARS}<path d="{HEAD}" fill="{ORANGE}"/>{EYES[FACE[status]](dx)}{MUZZLE.split("<path", 1)[0]}<ellipse cx="32" cy="38.2" rx="3.3" ry="2.3" fill="{INK}"/></g>'
+    halo = (
+        f'<g fill="{color}" stroke="{color}" stroke-width="5.5" stroke-linejoin="round">'
+        f'<circle cx="13.5" cy="25.5" r="4.6"/><circle cx="50.5" cy="25.5" r="4.6"/><path d="{HEAD}"/></g>'
+    )
+    head = f'{halo}<g fill="none">{EARS}<path d="{HEAD}" fill="{ORANGE}"/>{EYES[FACE[status]](dx)}{MUZZLE.split("<path", 1)[0]}<ellipse cx="32" cy="38.2" rx="3.3" ry="2.3" fill="{INK}"/></g>'
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 64 64">
-<mask id="cut"><rect width="64" height="64" fill="#fff"/><circle cx="50" cy="50" r="15.5" fill="#000"/></mask>
-<g mask="url(#cut)"><g transform="translate(-8.6 -7.4) scale(1.2)">{head}</g></g>
-<circle cx="50" cy="50" r="13" fill="{color}"/>
-<g fill="none" transform="translate(50 50) scale(.88) translate(-48 -46)">{glyph(t)}</g>
+<mask id="cut"><rect width="64" height="64" fill="#fff"/><circle cx="47" cy="46" r="18.5" fill="#000"/></mask>
+<g mask="url(#cut)"><g transform="translate(-6.4 -11.8) scale(1.1)">{head}</g></g>
+<circle cx="47" cy="46" r="16.5" fill="{color}"/>
+<g fill="none" transform="translate(47 46) scale(1.12) translate(-48 -46)">{glyph(t)}</g>
 </svg>"""
 
 
