@@ -8,10 +8,30 @@ Information** of the app at [api.slack.com/apps](https://api.slack.com/apps), or
 
 ## Icon
 
-[`profile/assets/slack-bot.png`](../profile/assets/slack-bot.png), 1024 × 1024, rendered from
-[`slack-bot.svg`](../profile/assets/slack-bot.svg) by `scripts/render.py`. The mascot from the
-organization avatar with a speech bubble, so the bot is told apart from the org in the sidebar.
-Slack rounds the corners itself; the drawing keeps clear of them.
+[`profile/assets/slack-bot.png`](../profile/assets/slack-bot.png): the organization avatar at
+1024 × 1024, rendered by `scripts/render.py`. Slack rounds the corners itself; the drawing keeps
+clear of them.
+
+## Review status emoji
+
+Custom emoji for the review status reactions, in [`emoji/`](emoji). Upload them under
+**Customize workspace → Emoji** with the names below, then set those names in the review status
+settings instead of the defaults. Each one is the mascot's head with a status badge in the corner:
+the badge carries the meaning at 22 px, the face backs it up when the emoji is shown larger.
+
+| Status                         | Name              | File                                                              | Default |
+| ------------------------------ | ----------------- | ----------------------------------------------------------------- | ------- |
+| Review in progress             | `:hk-reviewing:`  | [`hk-reviewing.gif`](emoji/hk-reviewing.gif) (animated, looks around) | 👀      |
+| Clean                          | `:hk-clean:`      | [`hk-clean.png`](emoji/hk-clean.png)                              | 🟢      |
+| Minor comments only            | `:hk-minor:`      | [`hk-minor.png`](emoji/hk-minor.png)                              | 🟠      |
+| Needs changes                  | `:hk-changes:`    | [`hk-changes.png`](emoji/hk-changes.png)                          | 🔴      |
+| Not reviewed (too large)       | `:hk-skipped:`    | [`hk-skipped.png`](emoji/hk-skipped.png)                          | ⚪      |
+
+<img src="emoji/hk-reviewing.gif" width="64"> <img src="emoji/hk-clean.png" width="64"> <img src="emoji/hk-minor.png" width="64"> <img src="emoji/hk-changes.png" width="64"> <img src="emoji/hk-skipped.png" width="64">
+
+All are 128 × 128 with a transparent background and well under Slack's 128 KB limit. The animated
+one has a static twin, `hk-reviewing.png`, for workspaces that turn animation off. Only the
+in-progress status moves: finished statuses stay still so a channel full of them does not flicker.
 
 ## Texts
 

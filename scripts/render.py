@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
+import math
 import pathlib
 import subprocess
+import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "profile" / "assets"
@@ -254,19 +256,6 @@ def avatar():
 </svg>"""
 
 
-def slack_avatar():
-    w = 1024
-    bubble = (
-        f'<path d="M742 118h176a44 44 0 0 1 44 44v84a44 44 0 0 1-44 44h-96l-58 48v-48h-22a44 44 0 0 1-44-44v-84a44 44 0 0 1 44-44z" fill="{AMBER}" stroke="#1f150e" stroke-width="20" stroke-linejoin="round" paint-order="stroke"/>'
-        f'<circle cx="782" cy="204" r="17" fill="{INK}"/><circle cx="830" cy="204" r="17" fill="{INK}"/><circle cx="878" cy="204" r="17" fill="{INK}"/>'
-    )
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{w}" viewBox="0 0 {w} {w}">
-{background(w, w, ORANGE, 0.5, 0.58, strip=False)}
-<g transform="translate(64 30) scale(14)">{icon()}</g>
-<g transform="translate(-8 40)">{bubble}</g>
-</svg>"""
-
-
 PANDORA = f"""<g fill="none">
 <circle cx="32" cy="24" r="20" fill="{AMBER}" opacity=".18"/>
 <circle cx="32" cy="26" r="11" fill="{AMBER}" opacity=".22"/>
@@ -319,12 +308,80 @@ def icon_svg(name):
     return f'<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 64 64">{icon(name)}</svg>'
 
 
+EMOJI_OUT = ROOT / "slack" / "emoji"
+EYES = {
+    "open": lambda dx=0.0: (
+        f'<circle cx="23" cy="32" r="3.8" fill="{INK}"/><circle cx="{24.2 + dx}" cy="30.8" r="1.2" fill="#fff"/>'
+        f'<circle cx="41" cy="32" r="3.8" fill="{INK}"/><circle cx="{42.2 + dx}" cy="30.8" r="1.2" fill="#fff"/>'
+    ),
+    "look": lambda dx=0.0: (
+        f'<circle cx="23" cy="32" r="4.4" fill="#fff"/><circle cx="{23 + dx}" cy="32.4" r="2.9" fill="{INK}"/>'
+        f'<circle cx="41" cy="32" r="4.4" fill="#fff"/><circle cx="{41 + dx}" cy="32.4" r="2.9" fill="{INK}"/>'
+    ),
+    "happy": lambda dx=0.0: f'<path d="M19.5 33.5q3.5-4.5 7 0M37.5 33.5q3.5-4.5 7 0" stroke="{INK}" stroke-width="2.4" stroke-linecap="round"/>',
+    "sleep": lambda dx=0.0: f'<path d="M19.5 32.5h7M37.5 32.5h7" stroke="{INK}" stroke-width="2.4" stroke-linecap="round"/>',
+}
+BADGE = {
+    "reviewing": ("#8b6cff", lambda t: (
+        f'<g transform="translate({1.6 * math.cos(t)} {1.6 * math.sin(t)})">'
+        f'<circle cx="46.6" cy="44.6" r="5" stroke="#fff" stroke-width="3"/>'
+        f'<path d="M50.3 48.3l4 4" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/></g>'
+    )),
+    "clean": ("#1f9d55", lambda t: '<path d="M41.5 46.5l4.5 4.5 8.5-9" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>'),
+    "minor": ("#fbbf24", lambda t: f'<path d="M48 39.5v8" stroke="{INK}" stroke-width="3.8" stroke-linecap="round"/><circle cx="48" cy="53" r="2.3" fill="{INK}"/>'),
+    "changes": ("#e5484d", lambda t: '<path d="M43 41l10 10M53 41l-10 10" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/>'),
+    "skipped": ("#7c8491", lambda t: '<path d="M42 46h12" stroke="#fff" stroke-width="3.8" stroke-linecap="round"/>'),
+}
+FACE = {"reviewing": "look", "clean": "happy", "minor": "open", "changes": "open", "skipped": "sleep"}
+
+
+def emoji(status, t=0.0):
+    color, glyph = BADGE[status]
+    dx = 1.3 * math.sin(t) if status == "reviewing" else 0.0
+    head = f'<g fill="none">{EARS}<path d="{HEAD}" fill="{ORANGE}"/>{EYES[FACE[status]](dx)}{MUZZLE.split("<path", 1)[0]}<ellipse cx="32" cy="38.2" rx="3.3" ry="2.3" fill="{INK}"/></g>'
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 64 64">
+<mask id="cut"><rect width="64" height="64" fill="#fff"/><circle cx="50" cy="50" r="15.5" fill="#000"/></mask>
+<g mask="url(#cut)"><g transform="translate(-8.6 -7.4) scale(1.2)">{head}</g></g>
+<circle cx="50" cy="50" r="13" fill="{color}"/>
+<g fill="none" transform="translate(50 50) scale(.88) translate(-48 -46)">{glyph(t)}</g>
+</svg>"""
+
+
+def write_emoji(status):
+    EMOJI_OUT.mkdir(parents=True, exist_ok=True)
+    svg = EMOJI_OUT / f"hk-{status}.svg"
+    svg.write_text(emoji(status))
+    subprocess.run(["rsvg-convert", "-w", "128", "-o", str(EMOJI_OUT / f"hk-{status}.png"), str(svg)], check=True)
+
+
+def write_animated(status, frames=16, ms=90):
+    from PIL import Image
+
+    images = []
+    with tempfile.TemporaryDirectory() as tmp:
+        for i in range(frames):
+            src = pathlib.Path(tmp) / f"{i}.svg"
+            src.write_text(emoji(status, 2 * math.pi * i / frames))
+            png = src.with_suffix(".png")
+            subprocess.run(["rsvg-convert", "-w", "128", "-o", str(png), str(src)], check=True)
+            rgba = Image.open(png).convert("RGBA")
+            frame = rgba.convert("RGB").quantize(colors=255, method=Image.Quantize.MEDIANCUT)
+            frame.paste(255, mask=rgba.getchannel("A").point(lambda a: 255 if a < 128 else 0))
+            images.append(frame)
+    images[0].save(
+        EMOJI_OUT / f"hk-{status}.gif", save_all=True, append_images=images[1:], duration=ms, loop=0, transparency=255, disposal=2
+    )
+
+
 OUT.mkdir(parents=True, exist_ok=True)
 write("banner", profile_banner(), 1280)
 write("avatar", avatar(), 512)
-write("slack-bot", slack_avatar(), 1024)
+write("slack-bot", avatar(), 1024)
 write("ai-disclaimer", disclaimer(), 1280)
 write("social-holtkeeper", social(), 1280)
 write("icon-holtkeeper", icon_svg("holtkeeper"), 128)
 for name in VARIANTS:
     write(f"icon-{name}", icon_svg(name), 128)
+for status in BADGE:
+    write_emoji(status)
+write_animated("reviewing")

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 64 64">
+<mask id="cut"><rect width="64" height="64" fill="#fff"/><circle cx="50" cy="50" r="15.5" fill="#000"/></mask>
+<g mask="url(#cut)"><g transform="translate(-8.6 -7.4) scale(1.2)"><g fill="none"><circle cx="13.5" cy="25.5" r="4.6" fill="#d95a0b"/><circle cx="50.5" cy="25.5" r="4.6" fill="#d95a0b"/><circle cx="13.5" cy="25.5" r="2" fill="#ffb547"/><circle cx="50.5" cy="25.5" r="2" fill="#ffb547"/><path d="M8 42c0-14 10.7-25 24-25s24 11 24 25v6H8z" fill="#ff7a1a"/><circle cx="23" cy="32" r="3.8" fill="#1a120c"/><circle cx="24.2" cy="30.8" r="1.2" fill="#fff"/><circle cx="41" cy="32" r="3.8" fill="#1a120c"/><circle cx="42.2" cy="30.8" r="1.2" fill="#fff"/><ellipse cx="32" cy="41.5" rx="12" ry="6.5" fill="#ffe6cc"/><ellipse cx="32" cy="38.2" rx="3.3" ry="2.3" fill="#1a120c"/></g></g></g>
+<circle cx="50" cy="50" r="13" fill="#e5484d"/>
+<g fill="none" transform="translate(50 50) scale(.88) translate(-48 -46)"><path d="M43 41l10 10M53 41l-10 10" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/></g>
+</svg>
